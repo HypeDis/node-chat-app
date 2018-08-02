@@ -10,8 +10,8 @@ describe('generateMessage', () => {
 
         let message = generateMessage(from,text);
         
-        //assert from match
         expect(message).toMatchObject({from, text});
+        
         expect(typeof message.createdAt).toBe('number');
 
     });
