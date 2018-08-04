@@ -29,4 +29,4 @@ describe('generateLocationMessage', () => {
         expect(typeof locationMessage.from).toBe('string');
         expect(typeof locationMessage.createdAt).toBe('number');
     });
-})
+});

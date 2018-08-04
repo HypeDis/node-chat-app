@@ -7,17 +7,22 @@ socket.on('connect', function () {
 
 socket.on('userLogin', function (message) {
     console.log('message from admin', message);
+    var li = jQuery('<li></li>'); //create a new list element and give it the message text
+    li.text(`${message.from}: ${message.text}`);
+
+    jQuery('#messages').append(li); //append the list to the unordered list 
 });
 
-socket.on('newMessage', function (recievedMessage) {
-    console.log('new message', recievedMessage);
+socket.on('newMessage', function (message) {
+    console.log('new message', message);
     var li = jQuery('<li></li>'); //create a new list element and give it the message text
-    li.text(`${recievedMessage.from}: ${recievedMessage.text}`);
+    li.text(`${message.from}: ${message.text}`);
 
     jQuery('#messages').append(li); //append the list to the unordered list 
 });
 
 socket.on('newLocationMessage', function (message) {
+    //server sends an object to all clients with a link to google maps
     let li = jQuery('<li></li>');
     let a = jQuery('<a target="_blank">My current location</a>')
 
@@ -31,20 +36,23 @@ socket.on('disconnect', function () {
     console.log('Disconnected from server');
 });
 
-socket.emit('createMessage', {
-    from: 'Frank',
-    text: 'hi'
-}, function (data) {
-    console.log('Got it', data);
-});
+// socket.emit('createMessage', {
+//     from: 'Frank',
+//     text: 'hi'
+// }, function (data) {
+//     console.log('Got it', data);
+// });
 
 jQuery('#message-form').on('submit', function (e) {
     e.preventDefault();
+
+    let messageTextBox = jQuery('[name=message]')
+
     socket.emit('createMessage', {
         from: 'User',
-        text: jQuery('[name=message]').val()
+        text: messageTextBox.val()
     }, function () {
-
+        messageTextBox.val('');
     });
 });
 
@@ -54,12 +62,18 @@ locationButton.on('click', function () {
         return alert('Geolocation not supported by your browser.');
     }
 
+    locationButton.attr('disabled', 'disabled').text('Sending location...'); //disable 'send location' button so it cant be spammed
+
     navigator.geolocation.getCurrentPosition(function (position) {
-        socket.emit('createLocationMessage', {
+        locationButton.removeAttr('disabled'); //re enable button on success
+        locationButton.text('Send location');
+        socket.emit('createLocationMessage', { //send coords to server then server sends out location message to all clients
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
         });
     }, function () {
+        locationButton.removeAttr('disabled');
+        locationButton.text('Send location');
         alert('unable to fetch location');
     });
 });
