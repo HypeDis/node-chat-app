@@ -7,26 +7,29 @@ socket.on('connect', function () {
 
 socket.on('userLogin', function (message) {
     console.log('message from admin', message);
+    const formattedTime = moment(message.createdAt).format('h:mm a');
     var li = jQuery('<li></li>'); //create a new list element and give it the message text
-    li.text(`${message.from}: ${message.text}`);
+    li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
     jQuery('#messages').append(li); //append the list to the unordered list 
 });
 
 socket.on('newMessage', function (message) {
     console.log('new message', message);
+    const formattedTime = moment(message.createdAt).format('h:mm a');
     var li = jQuery('<li></li>'); //create a new list element and give it the message text
-    li.text(`${message.from}: ${message.text}`);
+    li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
     jQuery('#messages').append(li); //append the list to the unordered list 
 });
 
 socket.on('newLocationMessage', function (message) {
     //server sends an object to all clients with a link to google maps
+    const formattedTime = moment(message.createdAt).format('h:mm a');
     let li = jQuery('<li></li>');
     let a = jQuery('<a target="_blank">My current location</a>')
 
-    li.text(`${message.from}: `);
+    li.text(`${message.from} ${formattedTime}: `);
     a.attr('href', message.url);
     li.append(a);
     jQuery('#messages').append(li);
