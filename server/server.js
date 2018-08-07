@@ -17,7 +17,7 @@ app.use(express.static(publicPath)); //looks for index.html by default
 io.on('connection', (socket) => { //when a connection is made between a server and client  'socket' contains the information between a client and the server
     //socket.emit and socket.on are pairs, one cant be used without the other
     console.log('new user whoa');
-    socket.emit('userLogin', generateMessage('Admin', 'Welcome to the chat app'));
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
     socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
     //socket.broadcast.emit sends data to every client connected to the server except the current instance
     //socket.emit from admin text should say welcome to chat app
@@ -31,7 +31,7 @@ io.on('connection', (socket) => { //when a connection is made between a server a
     });
 
     socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('User', coords.latitude, coords.longitude));
+        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
     })
 
     socket.on('disconnect', () => {

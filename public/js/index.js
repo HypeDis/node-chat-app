@@ -5,34 +5,35 @@ socket.on('connect', function () {
 
 });
 
-socket.on('userLogin', function (message) {
-    console.log('message from admin', message);
-    const formattedTime = moment(message.createdAt).format('h:mm a');
-    var li = jQuery('<li></li>'); //create a new list element and give it the message text
-    li.text(`${message.from} ${formattedTime}: ${message.text}`);
-
-    jQuery('#messages').append(li); //append the list to the unordered list 
-});
-
 socket.on('newMessage', function (message) {
-    console.log('new message', message);
     const formattedTime = moment(message.createdAt).format('h:mm a');
-    var li = jQuery('<li></li>'); //create a new list element and give it the message text
-    li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
-    jQuery('#messages').append(li); //append the list to the unordered list 
+    let template = jQuery('#message-template').html(); //html() returns the inner html of the selected element.
+    //creates a template using  formatting in "message-template" 
+    //  found in index.html
+    let html = Mustache.render(template, { //uses values from the object to fill in the template. 
+        text: message.text,
+        from: message.from,
+        createdAt: formattedTime
+    });
+
+    jQuery('#messages').append(html); 
 });
+
 
 socket.on('newLocationMessage', function (message) {
     //server sends an object to all clients with a link to google maps
     const formattedTime = moment(message.createdAt).format('h:mm a');
-    let li = jQuery('<li></li>');
-    let a = jQuery('<a target="_blank">My current location</a>')
 
-    li.text(`${message.from} ${formattedTime}: `);
-    a.attr('href', message.url);
-    li.append(a);
-    jQuery('#messages').append(li);
+    let template = jQuery('#location-message-template').html();
+    let html = Mustache.render(template, { 
+        from: message.from,
+        url: message.url,
+        createdAt: formattedTime
+    });
+
+    jQuery('#messages').append(html);
+
 });
 
 socket.on('disconnect', function () {
