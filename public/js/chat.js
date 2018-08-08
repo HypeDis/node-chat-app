@@ -1,15 +1,15 @@
 var socket = io();
 
-function scrollToBottom () {
+function scrollToBottom () { //autoscrolls messages if i am near the bottom 
     // Selectors 
     let messages = jQuery('#messages');
-    let newMessage = messages.children('li:last-child');
+    let newMessage = messages.children('li:last-child'); //the last list element in #messages
     //heights
     let clientHeight = messages.prop('clientHeight');
     let scrollTop = messages.prop('scrollTop');
     let scrollHeight = messages.prop('scrollHeight');
     let newMessageHeight = newMessage.innerHeight();
-    let lastMessageHeight = newMessage.prev().innerHeight();
+    let lastMessageHeight = newMessage.prev().innerHeight(); //the message before newest one
     if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
         messages.scrollTop(scrollHeight);
     }

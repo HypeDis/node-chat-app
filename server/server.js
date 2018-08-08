@@ -26,13 +26,16 @@ io.on('connection', (socket) => { //when a connection is made between a server a
     socket.on('createMessage', (message, callback) => {
         console.log('message recieved', message);
         //when new message is recieved by server is sends it to all the users
-        io.emit('newMessage', generateMessage(message.from, message.text)); //io.emit sends out to every client connected to the server
+        io.emit('newMessage', generateMessage(message.from, message.text));
+        //generateMessage creates a timestamp
+        //io.emit sends out to every client connected to the server
         callback('this is from the server');
     });
 
     socket.on('createLocationMessage', (coords) => {
         io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
-    })
+        //generateLocationMessage creates a google maps url and timestamp
+    });
 
     socket.on('disconnect', () => {
         console.log('user was disconnected');
