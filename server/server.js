@@ -42,17 +42,25 @@ io.on('connection', (socket) => { //when a connection is made between a server a
     });
 
     socket.on('createMessage', (message, callback) => {
-        console.log('message recieved', message);
         //when new message is recieved by server is sends it to all the users
-        io.emit('newMessage', generateMessage(message.from, message.text));
+        let user = users.getUser(socket.id);
+
+        if (user && isRealString(message.text)) {
+            io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+        };
+
         //generateMessage creates a timestamp
         //io.emit sends out to every client connected to the server
         callback('this is from the server');
     });
 
     socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
-        //generateLocationMessage creates a google maps url and timestamp
+        let user = users.getUser(socket.id);
+        if (user && coords) {
+            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+            //generateLocationMessage creates a google maps url and timestamp
+        }
+
     });
 
     socket.on('disconnect', () => {
